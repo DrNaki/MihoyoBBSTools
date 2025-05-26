@@ -27,6 +27,19 @@ def main():
     if not config.config["enable"]:
         log.warning("Config 未启用！")
         return 1, "Config 未启用！"
+    
+    # 使用环境变量覆盖 config 中的字段
+    env = os.environ
+    account = config.config.get("account", {})
+    account["cookie"] = env.get("COOKIE", account.get("cookie", ""))
+    account["stuid"] = env.get("STUID", account.get("stuid", ""))
+    account["stoken"] = env.get("STOKEN", account.get("stoken", ""))
+    account["ltuid"] = env.get("LTUID", account.get("ltuid", ""))
+    account["ltoken"] = env.get("LTOKEN", account.get("ltoken", ""))
+    account["mid"] = env.get("MID", account.get("mid", ""))
+    os_config = config.config.get("games", {}).get("os", {})
+    os_config["cookie"] = env.get("OS_COOKIE", os_config.get("cookie", ""))
+    
     # 检测参数是否齐全，如果缺少就进行登入操作
     if any([config.config["account"]["stuid"] == "", config.config["account"]["stoken"] == "",
             login.require_mid() and config.config["account"]["mid"] == ""]):
